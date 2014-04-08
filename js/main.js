@@ -2,7 +2,7 @@
 //todo: add discussions to each proposed and upcoming events
 
 (function(jtm1, $){
-//FUNCTIONAL HELPERS
+  //BEGIN FUNCTIONAL HELPERS ----------------
   var buildMemberList =  function(members){
     var lis =  members.map(function(unit){
       return '<li>' + unit.name + ' <a href="http://www.meetup.com/message/?recipientId=' + unit.id + '">email</a>' + (unit.topics[0] ? " topics: " +  + unit.topics.length +  "<ul>" :"") + (unit.topics[0] ? unit.topics.map(function(topic){return '<li>' +  topic.name + '</li>' }) : []).join("") + (unit.topics[0] ? "</ul>":"") + '</li>'
@@ -49,15 +49,20 @@
     return '</ul>' + profileData + '</ul>'
   }
 
+  //END FUNCTIONAL HELPERS -------------
+
   var el = "jt-meetup1";
 
-  var groupInfo = $.ajax({dataType: "jsonp", url:"https://api.meetup.com/Central-Virginia-Javascript-Enthusiasts-CVJSE/boards?page=1&key=37221ed576b506f7a73121b36675b51"})
+  // todo:
+  // event comments call todo
+  // $.ajax({dataType: "jsonp", url:"http://api.meetup.com/2/event_comments?event_id=168019442&order=time&show_diffs=True&desc=desc&offset=0&format=json&page=20&key=37221ed576b506f7a73121b36675b51"});
+  //var attendance = $.ajax({dataType: "jsonp", url:"https://api.meetup.com/Central-Virginia-Javascript-Enthusiasts-CVJSE/events/159401832/attendance?page=1&key=37221ed576b506f7a73121b36675b51"});
+  //var groupInfo = $.ajax({dataType: "jsonp", url:"https://api.meetup.com/Central-Virginia-Javascript-Enthusiasts-CVJSE/boards?page=1&key=37221ed576b506f7a73121b36675b51"})
 
+  // BEGIN PROMISED AJAX CALLS ----------
   jtm1.boards = function(){
     return $.ajax({dataType: "jsonp", url:"https://api.meetup.com/Central-Virginia-Javascript-Enthusiasts-CVJSE/boards/6083632/discussions/168019442?page=1&key=37221ed576b506f7a73121b36675b51"});
   }
-  // event comments call todo
-  // $.ajax({dataType: "jsonp", url:"http://api.meetup.com/2/event_comments?event_id=168019442&order=time&show_diffs=True&desc=desc&offset=0&format=json&page=20&key=37221ed576b506f7a73121b36675b51"});
 
   var activity = function(){
     return $.ajax({dataType: "jsonp", url:"https://api.meetup.com/activity?member_id=98488202&format=json&page_start=0&key=37221ed576b506f7a73121b36675b51"});
@@ -75,9 +80,6 @@
     return $.ajax({dataType: "jsonp", url:"http://api.meetup.com/2/profiles?order=visited&group_urlname=Central-Virginia-Javascript-Enthusiasts-CVJSE&offset=0&format=json&page=200&key=37221ed576b506f7a73121b36675b51"});
   }
 
-  // unused
-  var attendance = $.ajax({dataType: "jsonp", url:"https://api.meetup.com/Central-Virginia-Javascript-Enthusiasts-CVJSE/events/159401832/attendance?page=1&key=37221ed576b506f7a73121b36675b51"});
-
 //gets all members from cvjs: name, topics, bio, city, status, link (to member profile)
   var members = function(){
     if (!localStorage.getItem("cvjs_members") || (new Date() - new Date(JSON.parse(localStorage.getItem("cvjs_members_cache_date"))) > 86400) ) {
@@ -92,9 +94,9 @@
       return jtm1.mem = JSON.parse(localStorage.getItem("cvjs_members"));
     }
   }
+  // END PROMISED AJAX CALLS ----------
 
   jtm1.init = (function(){
-
       $.when(members(), activity(), proposed(), profiles(), upcoming()).then(function(mem, act, prop, prof, upcome){
         if (!localStorage.getItem("cvjs_members")) {
           localStorage.setItem("cvjs_members", JSON.stringify(mem[0].results));
@@ -120,6 +122,7 @@
         //$('jt-meetup1').html(jtm1.upcomingHTML + jtm1.proposedHTML + jtm1.activitiesHTML + jtm1.joinedProfileAndMemberHTML )
         $('jt-meetup1').html(jtm1.navigationHTML+ jtm1.upcomingHTML )
       })
+    //END INIT
   }());
 
   //END jtm1
