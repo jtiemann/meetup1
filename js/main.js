@@ -80,21 +80,20 @@
 
 //gets all members from cvjs: name, topics, bio, city, status, link (to member profile)
   var members = function(){
-    //if (!localStorage.getItem("cvjs_members"))
+    if (!localStorage.getItem("cvjs_members"))
       return $.ajax({dataType: "jsonp", url:"http://api.meetup.com/2/members?order=name&group_urlname=Central-Virginia-Javascript-Enthusiasts-CVJSE&offset=0&format=json&page=200&key=37221ed576b506f7a73121b36675b51"})
-    //else {
-      //return  $(JSON.parse(localStorage.getItem("cvjs_members"))).promise();
-    //}
+    else {
+      return jtm1.mem = JSON.parse(localStorage.getItem("cvjs_members"));
+    }
   }
 
   jtm1.init = (function(){
 
       $.when(members(), activity(), proposed(), profiles(), upcoming()).then(function(mem, act, prop, prof, upcome){
-//        if (!localStorage.getItem("cvjs_members")) {
-//          localStorage.setItem("cvjs_members", JSON.stringify(mem[0].results));
-//        }
-        //jtm1.mem = JSON.parse(localStorage.getItem("cvjs_members"));
-        jtm1.mem = mem[0].results;
+        if (!localStorage.getItem("cvjs_members")) {
+          localStorage.setItem("cvjs_members", JSON.stringify(mem[0].results));
+        }
+        jtm1.mem = jtm1.mem || mem[0].results;
         jtm1.activities = act[0];
         jtm1.proposed = prop[0];
         jtm1.profiles = prof[0];
